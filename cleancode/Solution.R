@@ -11,7 +11,6 @@ require(caret)
 require(ggplot2)
 require(data.table)
 require(testit)
-require(data.table)
 require(rpart)
 require(randomForest)
 require(testit)
@@ -31,13 +30,13 @@ summary(data)
 data.clean      <- data       [, -getIndexWithPred(data,is.na,0)]
 data.clean      <- data.clean [, -getIndexWithPred(data.clean,function(x) x=="",0)]
 # Deleting X, user name a timeStamps variables
-data.clean      <- data.clean [,-c(1:5)]
+data.clean      <- data.clean [,-c(1:6)]
 assert("Less columns expected",ncol(data.clean )< ncol(data))
 # Create partition and train and data 
 inTrain   <- createDataPartition(data.clean$classe, p = 0.8,list=F)
 tidy1     <- data.clean[ inTrain,]
 testing1  <- data.clean[-inTrain,]
-rm(data);rm(data.clean);
+# rm(data);rm(data.clean);
 
 # Now we can look for correlations in numeric predictors. But only using training data.
 
@@ -69,7 +68,7 @@ tidy3            <- cbind(tidy1[,-indNumeric],allPredictorsPCA)
 
 # 3. Training models ------------------------------------------------------
 # Create a partition
-training2 <- tidy1
+training1 <- tidy1
 
 training2        <- tidy2
 index.test2      <- which(lapply(testing1, class)=="numeric")
@@ -84,15 +83,9 @@ dim(PredictorPCATest)
 
 training3          <- tidy3
 allPredictorsPCA   <- predict(preProcPCAall, numericDataTest)
-testing3           <- cbind(testing1[,-index.test2 ],allPredictorsPCA,numericDataTest,index.test2)
+testing3           <- cbind(testing1[,-index.test2 ],allPredictorsPCA)
 
-rm(tidy1)
-rm(tidy2)
-rm(tidy3)
-rm(numericDataTest)
-rm(allPredictorsPCA)
-rm(t2.2)
-rm(t2.1)
+
 
 # Train First ModelmodelCompleto <- train(diagnosis~.,data=training,method="glm")
 modelrpart.1  <- train(classe ~.,data=training1, method="rpart")
@@ -113,6 +106,7 @@ tpredict.3    <- predict(modelrpart.3$finalModel,type="class")
 confusionMatrix(tpredict.3,training3$classe)
 
 # Train First ModelmodelCompleto <- train(diagnosis~.,data=training,method="glm")
+set.seed(1234)
 modelRF.3 <- randomForest(classe ~ ., 
                           data=training3,
                           mtry=3,
@@ -133,7 +127,7 @@ save(modelRF.1, file="models/randomForestForTraining1.RData")
 
 # Train First ModelmodelCompleto <- train(diagnosis~.,data=training,method="glm")
 modelRF.2 <- randomForest(classe ~ ., 
-                          data=training1,
+                          data=training2,
                           mtry=3,
                           ntree=500, 
                           importance=TRUE, do.trace=50)
