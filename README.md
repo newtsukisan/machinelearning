@@ -43,7 +43,8 @@ There are three directories.
 cleancode	-> Contains:
               Exploratory.R     -> to compile html file showing all process.
               Exploratory.html  -> file showing all process.
-              Solution.R        -> script used to find ans save models.
+              Solution.R        -> script used to find and save models.
+              SolutionFinal.R   -> script used to calculate final model and apply it to data.
 functions	-> Contains:
               functions.R       -> script with some functions used in the analisys.
 test      -> Contains:
@@ -53,8 +54,10 @@ test      -> Contains:
 5. Process.
 
 The proccess is showed in Exploratory.html. After an exploratory analisys is found that some variables have few information. So we consider several hypothesis:
-Hipothesis 1. Predictors with high number of NA are discarted.
-Hipothesis 2. Predictors with high number of empty vaulues are discarted.
+Hipothesis 1. Predictors with high number of NA have no information for training model.
+Hipothesis 2. Predictors with high number of empty values have no information for training model.
+
+Colunms 1 to 6 are not considered for training purposes. 
 
 After that three differents groups are formed. 
 Group 1 for training. All data cleaned. tidy1
@@ -64,3 +67,5 @@ Group 2 for training. Subtitue 6 high correlated predictor with PCA equivalents 
 Group 3 for training. Substitue all numeric predictors with PCA equivalents containing 80 % of variance.
 
 Lastly, two kind of models are used. Trees and random Forest. Trees have high error level even in training sets, random Forest have better performance. Definitive model is selected from random Forest with low OOB error. OOB is considered as an estimation of Error out of sample. Definitive model is used on test set to estimate Error out of Sample again, and is similar to OOB estimated. 
+
+6. When we have found a valid model, we apply it to predict test data of assigment. In SolutionFinal.R is reflected this complete proccess.
