@@ -33,7 +33,8 @@ testing1  <- data.clean[-inTrain,]
 rm(data);rm(data.clean);
 
 # 4. Training model ------------------------------------------------------
-# Train Random Forest 
+# Train Random Forest
+set.seed(1234)            # For reproducibility
 modelRF.1 <- randomForest(classe ~ ., 
                           data=training1,
                           mtry=3,
